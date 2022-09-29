@@ -1,4 +1,4 @@
-package practica
+package rockthejvmscalaforbeginners
 
 object Expressions extends App {
 
@@ -59,6 +59,11 @@ object Expressions extends App {
     a == b || a > c
   }
 
-  /** NOTAA: las instrucciones(ejecutadas) son de "JAVa"y las expresiones(evaluaciones) son de "scala"
+  /** NOTAA: las instrucciones(ejecutadas) son de "JAVA"y las expresiones(evaluaciones) son de "scala"
     */
+
+  val aHelloWorld = "Hellow World!" // Es una expresion de tipo string
+  print(
+    aHelloWorld
+  ) // los efectos secundarios, son expresiones que regresan a la unit
 }

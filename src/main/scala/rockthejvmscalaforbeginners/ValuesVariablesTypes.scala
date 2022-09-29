@@ -1,4 +1,4 @@
-package practica
+package rockthejvmscalaforbeginners
 
 object ValuesVariablesTypes extends App {
 
