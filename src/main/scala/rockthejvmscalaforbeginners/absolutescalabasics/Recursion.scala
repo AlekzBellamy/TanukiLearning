@@ -1,4 +1,4 @@
-package rockthejvmscalaforbeginners
+package rockthejvmscalaforbeginners.absolutescalabasics
 
 import scala.annotation.tailrec
 
@@ -10,6 +10,7 @@ object Recursion extends App {
     * para que calcule el resultado intermedio y luego pueda multiplicarlo con el nuemero y devolverlo desde la pila
     *
     * 5 * f(5-1) * f(4-1) * f(3-1) * f(2-1) -> n veces
+    * No necesita Conservar el marco de pila
     */
   def factorial(n: Int): Int = {
     if (n <= 1) 1

@@ -1,4 +1,4 @@
-package rockthejvmscalaforbeginners
+package rockthejvmscalaforbeginners.absolutescalabasics
 
 object Expressions extends App {
 

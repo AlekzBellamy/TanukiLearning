@@ -1,4 +1,4 @@
-package rockthejvmscalaforbeginners
+package rockthejvmscalaforbeginners.absolutescalabasics
 
 object ValuesVariablesTypes extends App {
 
