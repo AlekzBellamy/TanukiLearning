@@ -104,7 +104,7 @@ object AnonymousClasess extends App {
     def ++[B >: A](list: MyList[B]): MyList[B]
   }
 
-  object EmptyList extends MyList[Nothing] {
+  case object EmptyList extends MyList[Nothing] {
     def head: Nothing = throw new NoSuchElementException()
 
     def tail: MyList[Nothing] = throw new NoSuchElementException()
@@ -126,7 +126,7 @@ object AnonymousClasess extends App {
     def ++[B >: Nothing](list: MyList[B]): MyList[B] = list
   }
 
-  class ConsList[+A](h: A, t: MyList[A]) extends MyList[A] {
+  case class ConsList[+A](h: A, t: MyList[A]) extends MyList[A] {
     def head: A = h
 
     def tail: MyList[A] = t
@@ -184,6 +184,8 @@ object AnonymousClasess extends App {
   }
   val listOfIntegers: MyList[Int] =
     new ConsList(1, new ConsList(2, new ConsList(3, EmptyList)))
+  val listOfIntegersClone: MyList[Int] =
+    new ConsList(1, new ConsList(2, new ConsList(3, EmptyList)))
   val listOfIntegers0: MyList[Int] =
     new ConsList(10, new ConsList(12, new ConsList(13, EmptyList)))
   val listOfString: MyList[String] =
@@ -217,4 +219,12 @@ object AnonymousClasess extends App {
       .toString
   )
 //KLista  covariante
+
+  /** añadioendo la clase de casos , habilitamos  los metodos serializable, equals y tostring, clone,
+    * si no se implementa se tendria que hacer algun metodo recursivo para  cmparar los elementos
+    */
+
+  // despues de implementar el case podemos usar el equasl
+  println(listOfIntegersClone == listOfIntegers)
+
 }
