@@ -1,0 +1,3 @@
+package practica
+
+class Cinderella {}

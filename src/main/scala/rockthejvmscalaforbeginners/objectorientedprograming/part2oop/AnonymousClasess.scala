@@ -68,6 +68,8 @@ object AnonymousClasess extends App {
     *
     *    utilizar la contravariante -T y -A
     */
+
+  /*
   trait MyPredicate0[-T] {
     def test[T](f: T => Boolean): Boolean
   }
@@ -82,7 +84,7 @@ object AnonymousClasess extends App {
   trait MyTransformer[-A, B] {
     def transform(elem: A): B
   }
-
+   */
   abstract class MyList[+A] {
     def head: A
 
@@ -96,10 +98,13 @@ object AnonymousClasess extends App {
 
     override def toString: String = "[" + printElements + "]"
 
-    def map[B](transformer: MyTransformer[A, B]): MyList[B]
+    /** ahora son funciones de orden superrior , higer- order functrion
+      * ahora  como parametros se usan funciones como valores de primer orden o devuelven  otras funciones
+      */
+    def map[B](transformer: A => B): MyList[B]
 
-    def flatMap[B](transformer: MyTransformer[A, MyList[B]]): MyList[B]
-    def filter(myPredicate0: MyPredicate[A]): MyList[A]
+    def flatMap[B](transformer: A => MyList[B]): MyList[B]
+    def filter(myPredicate0: A => Boolean): MyList[A]
     //def flatMap[B](f:)
     def ++[B >: A](list: MyList[B]): MyList[B]
   }
@@ -116,13 +121,13 @@ object AnonymousClasess extends App {
 
     def printElements: String = ""
 
-    def map[B](transformer: MyTransformer[Nothing, B]): MyList[B] = EmptyList
+    def map[B](transformer: Nothing => B): MyList[B] = EmptyList
 
     def flatMap[B](
-        transformer: MyTransformer[Nothing, MyList[B]]
+        transformer: Nothing => MyList[B]
     ): MyList[B] = EmptyList
 
-    def filter(myPredicate0: MyPredicate[Nothing]): MyList[Nothing] = EmptyList
+    def filter(myPredicate0: Nothing => Boolean): MyList[Nothing] = EmptyList
     def ++[B >: Nothing](list: MyList[B]): MyList[B] = list
   }
 
@@ -146,8 +151,8 @@ object AnonymousClasess extends App {
       * = new Cons(2, new Cons(4, new Cons(6, [].map( n*2))))
       * = new Cons(2, new Cons(4, new Cons(6, empty)))
       */
-    def map[B](transformer: MyTransformer[A, B]): MyList[B] =
-      new ConsList(transformer.transform(h), t.map(transformer))
+    def map[B](transformer: A => B): MyList[B] =
+      new ConsList(transformer(h), t.map(transformer))
 
     /** como trabaja
       * [1,2].flatmap(n=> [n,n+1])
@@ -156,8 +161,8 @@ object AnonymousClasess extends App {
       *   = [1,2] ++ [2,3] ++ empty
       *    = [1,2,2,3]
       */
-    def flatMap[B](transformer: MyTransformer[A, MyList[B]]): MyList[B] =
-      transformer.transform(h) ++ t.flatMap(transformer)
+    def flatMap[B](transformer: A => MyList[B]): MyList[B] =
+      transformer(h) ++ t.flatMap(transformer)
 
     /** como trabaja
       * [1,2] ++ [3.,5,6]
@@ -178,8 +183,8 @@ object AnonymousClasess extends App {
       *  new Cons(2, [3].filter(n%2 ==0 false)) =>  new Cons(2, [].filter(n%2 ==0))
       *  new Cons(2, empty)
       */
-    def filter(myPredicate0: MyPredicate[A]): MyList[A] =
-      if (myPredicate0.test(h)) new ConsList(h, t.filter(myPredicate0))
+    def filter(myPredicate0: A => Boolean): MyList[A] =
+      if (myPredicate0(h)) new ConsList(h, t.filter(myPredicate0))
       else t.filter(myPredicate0)
   }
   val listOfIntegers: MyList[Int] =
@@ -192,19 +197,19 @@ object AnonymousClasess extends App {
     new ConsList("A", new ConsList("B", new ConsList("C", EmptyList)))
   println(
     listOfIntegers
-      .map(new MyTransformer[Int, Int] {
-        override def transform(elem: Int): Int = elem * 2
+      .map(new Function1[Int, Int] {
+        override def apply(elem: Int): Int = elem * 2
       })
       .toString
   )
 
-  println(
+  /* println(
     listOfIntegers
-      .filter(new MyPredicate[Int] {
-        override def test(elem: Int): Boolean = elem % 2 == 0
+      .filter(new Function1[Int] {
+        override def apply(elem: Int): Boolean = elem % 2 == 0
       })
       .toString
-  )
+  )*/
 
   println(
     listOfIntegers ++ listOfIntegers0
@@ -212,13 +217,16 @@ object AnonymousClasess extends App {
 
   println(
     listOfIntegers
-      .flatMap(new MyTransformer[Int, MyList[Int]] {
-        override def transform(elem: Int): MyList[Int] =
+      .flatMap(new Function1[Int, MyList[Int]] {
+        override def apply(elem: Int): MyList[Int] =
           new ConsList(elem, new ConsList(elem + 1, EmptyList))
       })
       .toString
   )
-//KLista  covariante
+
+  /** Con este cambio para usar arrows =>,   empezamos a usar funciones d eprimera clase
+    */
+  //KLista  covariante
 
   /** añadioendo la clase de casos , habilitamos  los metodos serializable, equals y tostring, clone,
     * si no se implementa se tendria que hacer algun metodo recursivo para  cmparar los elementos

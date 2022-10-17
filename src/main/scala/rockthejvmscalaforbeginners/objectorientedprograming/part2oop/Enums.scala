@@ -34,7 +34,7 @@ object Enums extends App {
     case WRITE extends PermissionWithBits(2)
     case EXECUTE extends PermissionWithBits(1)
     case NONE extends PermissionWithBits(0)
-
+    
   }
 
   /**

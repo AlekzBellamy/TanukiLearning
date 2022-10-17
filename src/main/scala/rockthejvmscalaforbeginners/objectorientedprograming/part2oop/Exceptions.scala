@@ -47,7 +47,6 @@ object Exceptions extends App {
     *       -- multiply(x,y)
     *       --divide(x/y)
     *        lanzar una excepcion personalizada si ocurre algo incorrecto
-    *
     *        OverFlowException if add(x,Y) exceds Int Value
     *        UnderFlowException if substract (x,y) excets int.Min value
     *        MatCalculationException para la division si es divivida x0
@@ -57,22 +56,81 @@ object Exceptions extends App {
   def errorStackOF(): Int = throw new StackOverflowError()
 
   object Calculator {
-    def suma(x: Int, y: Int): Int =
-      if ((x < Int.MaxValue && y < Int.MaxValue) || (x + y) < Int.MaxValue)
-        x + y
-      else throw new OverFlowException
 
-    def -(x: Int, y: Int): Int = ???
-    def *(x: Int, y: Int): Int = ???
-    def /(x: Int, y: Int): Int = ???
+    def exeedsMaxValue(int: BigInt): BigInt =
+      if (int > Int.MaxValue) throw new OverFlowException()
+      else int
+
+    def exeedsMinValue(int: BigInt): BigInt =
+      if (int < Int.MinValue) throw new UnderFlowException()
+      else int
+
+    def IntCannotNotZero(int: BigInt): BigInt =
+      if (int < 1) throw new MathCalculationException()
+      else int
+
+    def evaluaInt(int: BigInt): BigInt =
+      exeedsMaxValue(exeedsMinValue(int))
+
+    def suma(x: BigInt, y: BigInt): BigInt =
+      evaluaInt(evaluaInt(x) + evaluaInt(y))
+
+    def resta(x: BigInt, y: BigInt): BigInt =
+      evaluaInt(evaluaInt(x) - evaluaInt(y))
+    def multiplica(x: BigInt, y: BigInt): BigInt =
+      evaluaInt(evaluaInt(x) * evaluaInt(y))
+    def divide(x: BigInt, y: BigInt): BigInt =
+      evaluaInt(evaluaInt(x) / IntCannotNotZero(evaluaInt(y)))
 
   }
 
-  class OverFlowException extends Exception {}
-  class UnderFlowException extends Exception {}
-  class MathCalculationException extends Exception {}
+  class OverFlowException extends RuntimeException {}
+  class UnderFlowException extends RuntimeException {}
+  class MathCalculationException extends RuntimeException {}
 
-  val calculator = Calculator
-  println(calculator.suma(2147483647, 2147483647))
+  //val calculator = Calculator.suma(Int.MaxValue, 5)
+
+  //Ejericcios
+
+  //OOM val array = Array.ofDim[Int](Int.MaxValue)
+  //SO
+
+  //SO def infinite: Int = 1 + infinite
+  //val noLimit = infinite
+
+  object PocketCalulator {
+    def add(x: Int, y: Int) = {
+      val result = x + y
+
+      if (x > 0 && y > 0 && result < 0) throw new OverFlowException()
+      else if (x < 0 && y < 0 && result > 0) throw new UnderFlowException()
+      else result
+    }
+
+    def substract(x: Int, y: Int) = {
+      val result = x + y
+
+      if (x > 0 && y < 0 && result < 0) throw new OverFlowException()
+      else if (x < 0 && y > 0 && result > 0) throw new UnderFlowException()
+      else result
+    }
+
+    def multiply(x: Int, y: Int) = {
+      val result = x * y
+
+      if (x > 0 && y > 0 && result < 0) throw new OverFlowException()
+      else if (x < 0 && y < 0 && result < 0) throw new OverFlowException()
+      else if (x < 0 && y < 0 && result > 0) throw new UnderFlowException()
+      else if (x > 0 && y > 0 && result > 0) throw new UnderFlowException()
+      else result
+    }
+
+    def divide(x: Int, y: Int) = {
+      if (y == 0) throw new MathCalculationException()
+      else x / y
+    }
+  }
+
+  println(PocketCalulator.divide(10, 0))
 
 }
