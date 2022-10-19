@@ -17,3 +17,4 @@ println(multiplicar(1)(2))
 def multiplicadorPrevio(n: Int) = multiplicar(n)(2)
 
 println(multiplicadorPrevio(10))
+
