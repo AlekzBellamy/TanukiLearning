@@ -61,6 +61,7 @@ object HOFsCurries extends App {
   println(superAdd(3)(10))
 
   def curriedFormarter(c: String)(x: Double): String = c.format(x)
+
   val standardFormat: (Double => String) = curriedFormarter("%4.2f")
   val precopormat: (Double => String) = curriedFormarter("%10.8f")
 
@@ -74,19 +75,63 @@ object HOFsCurries extends App {
   /** Ejercicio
     * 1.- expandir MyList
     *    - foreach metodo que retorna Unit  A=> Unit
-    *    [1,2,3].foreach(x=> print(x)) imprimira los valore
-    *    -sort funcion paraordenar (A, A => Int) => MyList
-    *    [12,3]. sort{x,y }=> y -x => [3,2,1]
-    *    -ZipWith function  que toma otra lista para unirlas (list, (A, A) => MyList[B])
-    *    [1,2,3].zipWith[4,5,6] , x* y= > [1* 4, 2* 5, 3* 6]
-    *    -Fold(start)(function) => a vlaue
-    *    [1,2,3].fold(0){x+y} = 6
+    *      [1,2,3].foreach(x=> print(x)) imprimira los valore
+    *      -sort funcion paraordenar (A, A => Int) => MyList
+    *      [12,3]. sort{x,y }=> y -x => [3,2,1]
+    *      -ZipWith function  que toma otra lista para unirlas (list, (A, A) => MyList[B])
+    *      [1,2,3].zipWith[4,5,6] , x* y= > [1* 4, 2* 5, 3* 6]
+    *      -Fold(start)(function) => a vlaue
+    *      [1,2,3].fold(0){x+y} = 6
     *
-    *    2.-
-    *    toCurry(f: (Int, Int) = Int => (Int = Int = Int) que
-    *    fromCurry(f:Int => Int=> Int) = (Int,Int)=> Int
-    *    3.-
-    *    compose(f,g) => x => f(g(x))
-    *    andThem(f,g) => x => g(f(x))
+    * 2.-
+    * toCurry(f: (Int, Int) = Int => (Int = Int = Int) que
+    * fromCurry(f:Int => Int=> Int) = (Int,Int)=> Int
+    * 3.-
+    * compose(f,g) => x => f(g(x))
+    * andThem(f,g) => x => g(f(x))
     */
+
+  def toCurry(f: (Int, Int) => Int): (Int => Int => Int) =
+    x => y => f(x, y)
+
+  def fromCurry(f: (Int => Int => Int)): (Int, Int) => Int =
+    (x, y) => f(x)(y)
+
+  def compose(f: Int => Int, g: Int => Int): Int => Int =
+    x => f(g(x))
+
+  def andThen(f: Int => Int, g: Int => Int): Int => Int =
+    x => g(f(x))
+
+  /** para funcion X
+    */
+  def compose0[A, B, T](f: A => B, g: T => A): T => B =
+    x => f(g(x))
+
+  def andThen0[A, B, C](f: A => B, g: B => C): A => C =
+    x => g(f(x))
+
+  def superAdder0: (Int => Int => Int) = toCurry(_ + _)
+
+  val add4 = superAdder0(4)
+  println(add4(6))
+
+  def simpleAdder = fromCurry(superAdder0)
+
+  println(simpleAdder(5, 5))
+
+  val add20 = (x: Int) => x + 2
+
+  val add30 = (x: Int) => x + 3
+
+  val compose01 = compose0(add20, add30)
+  val andThen01 = andThen0(add20, add30)
+
+  println(add20)
+  println(add30)
+  println(compose01)
+  println(andThen01)
+
+  println(compose01(1))
+  println(andThen01(4))
 }

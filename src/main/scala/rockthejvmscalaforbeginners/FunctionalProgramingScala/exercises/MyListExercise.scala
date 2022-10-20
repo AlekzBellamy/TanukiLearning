@@ -1,4 +1,4 @@
-package rockthejvmscalaforbeginners.FunctionalProgramingScala
+package rockthejvmscalaforbeginners.FunctionalProgramingScala.exercises
 
 object MyListExercise extends App {
   abstract class MyList[+A] {
@@ -31,7 +31,9 @@ object MyListExercise extends App {
 
     def sort(f: (A, A) => Int): MyList[A]
 
-    /*def zipWith[B](f: (A, A) => B): MyList[B]*/
+    def zipWith[B, C](list: MyList[B], zip: (A, B) => C): MyList[C]
+
+    def fold[B](start: B)(operator: (B, A) => B): B
 
   }
 
@@ -60,6 +62,13 @@ object MyListExercise extends App {
     def foreach(f: Nothing => Unit): Unit = ()
 
     def sort(f: (Nothing, Nothing) => Int) = EmptyList
+
+    def zipWith[B, C](list: MyList[B], zip: (Nothing, B) => C): MyList[C] =
+      if (!list.isEmpty) throw new RuntimeException(" no hay elementos")
+      else EmptyList
+
+    def fold[B](start: B)(operator: (B, Nothing) => B): B = start
+
   }
 
   case class ConsList[+A](h: A, t: MyList[A]) extends MyList[A] {
@@ -116,7 +125,7 @@ object MyListExercise extends App {
       * new Cons(2, empty)
       */
     def filter(myPredicate0: A => Boolean): MyList[A] =
-      if (myPredicate0(h)) new ConsList(h, t.filter(myPredicate0))
+      if (myPredicate0(h)) ConsList(h, t.filter(myPredicate0))
       else t.filter(myPredicate0)
 
     def foreach(f: A => Unit): Unit = {
@@ -124,25 +133,40 @@ object MyListExercise extends App {
       t.foreach(f)
     }
     def sort(f: (A, A) => Int): MyList[A] = {
-      def insert(x: A, sortedList: MyList[A]): MyList[A] = {
-        if (sortedList.isEmpty) new ConsList(x, EmptyList)
-        else if (f(x, sortedList.head) <= 0) new ConsList(x, sortedList)
-        else new ConsList(sortedList.head, insert(x, sortedList).tail)
-      }
+      def insert(x: A, sortedList: MyList[A]): MyList[A] =
+        if (sortedList.isEmpty) ConsList(x, EmptyList)
+        else if (f(x, sortedList.head) <= 0) ConsList(x, sortedList)
+        else ConsList(sortedList.head, insert(x, sortedList.tail))
 
       val sortedTail = t.sort(f)
       insert(h, sortedTail)
     }
+
+    def zipWith[B, C](list: MyList[B], zip: (A, B) => C): MyList[C] =
+      if (list.isEmpty) throw new RuntimeException(" no hay elementos3")
+      else ConsList(zip(h, list.head), t.zipWith(list.tail, zip))
+
+    /** como funciona
+      * [1,2,3].fold(0)(+)
+      * [2,3].fold(1)(+)
+      * [3].fold(3)(+)
+      * [].fold(6)(+)
+      */
+    def fold[B](start: B)(operator: (B, A) => B): B = {
+
+      t.fold(operator(start, h))(operator)
+    }
+
   }
 
   val listOfIntegers: MyList[Int] =
-    new ConsList(1, new ConsList(2, new ConsList(3, EmptyList)))
+    ConsList(16, ConsList(21, ConsList(3, EmptyList)))
   val listOfIntegersClone: MyList[Int] =
-    new ConsList(1, new ConsList(2, new ConsList(3, EmptyList)))
+    ConsList(1, ConsList(2, ConsList(3, EmptyList)))
   val listOfIntegers0: MyList[Int] =
-    new ConsList(10, new ConsList(12, new ConsList(13, EmptyList)))
+    ConsList(10, ConsList(12, ConsList(13, EmptyList)))
   val listOfString: MyList[String] =
-    new ConsList("A", new ConsList("B", new ConsList("C", EmptyList)))
+    ConsList("A", ConsList("B", ConsList("C", EmptyList)))
   println(
     listOfIntegers.map(elem => elem * 2).toString
   )
@@ -180,6 +204,21 @@ object MyListExercise extends App {
   val superAdd = (x: Int) => (y: Int) => x + y
   println(superAdd(1)(3))
 
-  listOfIntegers.foreach(print(_))
+  listOfIntegers.foreach(println(_))
+  println(
+    listOfIntegers
+      .sort((x, y) => y - x)
+  )
 
+  println(
+    listOfIntegers.zipWith[String, String](listOfString, _ + " " + _)
+  )
+
+  println(listOfIntegersClone.fold(0)(_ + _))
+
+  val g = for {
+    nInt <- listOfIntegers
+    string <- listOfString
+  } yield (nInt.toString + string.toString)
+  println(g)
 }
