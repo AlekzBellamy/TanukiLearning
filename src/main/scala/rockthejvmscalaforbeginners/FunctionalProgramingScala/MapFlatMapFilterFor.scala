@@ -29,7 +29,8 @@ object MapFlatMapFilterFor extends App {
   }) //???? si le hago un flaten mehjor uso un map lml
 
   println(chars.flatMap { c => numbers.map(c.toString + _) })
-
+  println(chars.map { c => numbers.map(c.toString + _) })
+  println("GGGGG")
   val colors = List("black", "withe")
   println(chars.flatMap { c =>
     numbers.flatMap(n => colors.map(n.toString + c + _))
@@ -48,8 +49,24 @@ object MapFlatMapFilterFor extends App {
   for {
     n <- numbers
   } println(n)
+  for {
+    g <- Some("aaaa")
+    g1 <- None
+  } println(g)
 
-  /**
-   * NOTA, los valores  opciondales son importantesssss!!!
-   */
+  /** NOTA, los valores  opciondales son importantesssss!!!
+    */
+
+  val forCombinations0 = for {
+    n <- numbers if n % 2 == 0 // se pueden aplicar  o usar guardias
+    c <- chars
+    color <- colors
+  } yield (n.toString + c + color)
+  println(forCombinations0)
+  println(numbers.filter(n => n % 2 == 0).map { n =>
+    chars.map { c =>
+      colors.map { color => n.toString + c + color }
+    }
+  })
+  
 }

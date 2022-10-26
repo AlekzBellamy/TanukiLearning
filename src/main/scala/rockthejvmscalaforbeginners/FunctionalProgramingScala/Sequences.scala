@@ -83,9 +83,32 @@ object Sequences extends App {
   println(vector)
 
   /** vectors vs list
+    * ventajas
+    * la lista guarda la referencia de cola
+    * el vector necesita atravesar el arbol en 32 ramas y luego reeemplazar el trozo (chunk), es decir la profundidad del arbol es pequeña
+    * desventajas
+    * la lista en la actualizacion del elemento lleva mucho tiempo
+    * el vector su desventaja es que necesita reemplazar un tro de  32 elementos
     */
 
+  val maxRuns = 100
+  val maxCapacity = 1000000
   def getWriteTime(collections: Seq[Int]): Double = {
     val r = new Random
+    val times = for {
+      it <- 1 to maxRuns
+    } yield {
+      val currentTime = System.nanoTime()
+      collections.updated(r.nextInt(maxCapacity), r.nextInt())
+      System.nanoTime() - currentTime
+    }
+    times.sum * 1.0 / maxRuns
   }
+
+  val numbersList = (1 to maxCapacity).toList
+  val numbersVectors = (1 to maxCapacity).toVector
+
+  println(getWriteTime(numbersList))
+
+  println(getWriteTime(numbersVectors))
 }

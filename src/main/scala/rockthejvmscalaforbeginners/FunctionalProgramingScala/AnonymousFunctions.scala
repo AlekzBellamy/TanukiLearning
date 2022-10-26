@@ -47,7 +47,7 @@ object AnonymousFunctions extends App {
   /** una forma diferente de escribirlo es con las {}  llaves paara definir
     */
 
-  val stringToInt = { (str: String) => str.toInt }
+  val stringToInt: String => Int = { (str: String) => str.toInt }
   println(stringToInt)
   println(stringToInt("6"))
 
