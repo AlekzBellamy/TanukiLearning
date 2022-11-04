@@ -132,10 +132,10 @@ object AllthePatterns extends App {
     case lsitaNumeros: List[Int]   => "son enteros"
     case _                         => "me"
   }
-  val r2 = numbres match {
+  /* val r2 = numbres match {
     case lsitaString: List  => "son string"
     case lsitaNumeros: List => "son enteros"
     case _                  => "me"
-  }
+  }*/
   println(r)
 }
